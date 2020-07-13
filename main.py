@@ -1,9 +1,10 @@
 import requests
 import json
-from bs4 import BeautifulSoup as bf
-import pandas as pd
-from robot import MyRobot
 import os
+import pandas as pd
+from bs4 import BeautifulSoup as bf
+from robot import MyRobot
+from converter import Converter
 
 
 class getUrl:
@@ -32,24 +33,25 @@ class getUrl:
         for i in content:
             data.append([i.string, i.get("href")])
 
-        pd.DataFrame(data, columns = ["章节","url"]).to_csv("data/queue.csv")
-        
+        pd.DataFrame(data, columns=["章节", "url"]).to_csv("data/queue.csv")
+
         self.queue_length = len(data)
-        self.number_of_process = self.queue_length // self.config['capacity']
-        
+        self.number_of_process = self.queue_length // self.config["capacity"]
+
         cf = {
-            "book": self.config['book'],
-            "url": self.config['url'],
-            "headers": self.config['headers'],
-            "capacity": self.config['capacity'],
-            "encoding": self.config['encoding'],
-            "selector": self.config['content_selector'],
+            "book": self.config["book"],
+            "url": self.config["url"],
+            "headers": self.config["headers"],
+            "capacity": self.config["capacity"],
+            "encoding": self.config["encoding"],
+            "selector": self.config["content_selector"],
             "queue_length": self.queue_length,
-            "number_of_process": self.number_of_process
+            "number_of_process": self.number_of_process,
         }
 
-        with open('config/robot.json', 'w', encoding='utf-8') as f:
+        with open("config/robot.json", "w", encoding="utf-8") as f:
             json.dump(cf, f)
+
 
 if __name__ == "__main__":
     get = getUrl()
@@ -57,3 +59,6 @@ if __name__ == "__main__":
 
     robot = MyRobot()
     robot.run()
+
+    converter = Converter()
+    converter.run()
