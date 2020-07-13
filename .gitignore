@@ -1,2 +1,4 @@
 .ipynv_checkpoints/
 *.pyc
+book/
+__pycache__

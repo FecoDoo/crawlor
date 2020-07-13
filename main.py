@@ -2,6 +2,9 @@ import requests
 import json
 from bs4 import BeautifulSoup as bf
 import pandas as pd
+from robot import MyRobot
+import os
+
 
 class getUrl:
     def run(self):
@@ -10,8 +13,9 @@ class getUrl:
 
     def get_config(self):
         try:
-            with open("小说/config.json", encoding="utf-8") as f:
+            with open("config/config.json", encoding="utf-8") as f:
                 self.config = json.load(f)
+            os.mkdir(f"book/{self.config['book']}")
         except FileNotFoundError as e:
             print(e)
 
@@ -28,13 +32,12 @@ class getUrl:
         for i in content:
             data.append([i.string, i.get("href")])
 
-        pd.DataFrame(data, columns = ["章节","url"]).to_csv("小说/queue.csv")
+        pd.DataFrame(data, columns = ["章节","url"]).to_csv("data/queue.csv")
         
         self.queue_length = len(data)
         self.number_of_process = self.queue_length // self.config['capacity']
         
         cf = {
-            "path": self.config['path'],
             "book": self.config['book'],
             "url": self.config['url'],
             "headers": self.config['headers'],
@@ -45,9 +48,12 @@ class getUrl:
             "number_of_process": self.number_of_process
         }
 
-        with open('小说/robot.json', 'w', encoding='utf-8') as f:
+        with open('config/robot.json', 'w', encoding='utf-8') as f:
             json.dump(cf, f)
 
 if __name__ == "__main__":
     get = getUrl()
     get.run()
+
+    robot = MyRobot()
+    robot.run()
