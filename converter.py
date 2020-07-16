@@ -14,3 +14,7 @@ class Converter:
                     f"book/{config['book']}/{config['book']}.txt", "a", encoding="utf-8"
                 ) as b:
                     b.writelines(chapter)
+
+if __name__ == "__main__":
+    c = Converter()
+    c.run()
